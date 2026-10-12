@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wreath math - calculators</title>
+<style>
+  :root { --accent: #4e6e5d; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Georgia, 'Times New Roman', serif; background: #f5f8f5; color: #272d29; line-height: 1.55; }
+  main { max-width: 1100px; margin: 0 auto; padding: 40px 20px 64px; }
+  h1 { font-size: 2rem; margin: 0 0 8px; color: var(--accent); }
+  .lede { margin: 0 0 28px; max-width: 640px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+  section { background: #fff; border: 1px solid #d5e0d5; border-radius: 8px; padding: 20px 22px; }
+  h2 { font-size: 1.15rem; margin: 0 0 6px; }
+  .hint { font-size: 0.9rem; color: #5c7566; margin: 0 0 14px; }
+  label { display: block; font-size: 0.9rem; margin: 10px 0 3px; }
+  input { width: 100%; padding: 8px 10px; font-size: 1rem; border: 1px solid #b8cabb; border-radius: 5px; font-family: inherit; }
+  button { margin-top: 16px; width: 100%; padding: 11px; background: var(--accent); color: #fff; border: 0; border-radius: 6px; font-size: 1rem; cursor: pointer; font-family: inherit; }
+  button:hover { filter: brightness(1.08); }
+  .out { margin-top: 14px; font-size: 1rem; min-height: 1.4em; }
+  .out.err { color: #a32222; }
+  footer { max-width: 1100px; margin: 0 auto; padding: 0 20px 40px; font-size: 0.85rem; color: #96a89a; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Wreath math</h1>
+  <p class="lede">Bundles for the frame, meters for the bow, and the margin on the door. Exact arithmetic, every borrowed number labeled.</p>
+  <div class="grid">
+    <section>
+      <h2>Frame plan</h2>
+      <p class="hint">Diameter becomes bundles.</p>
+      <label for="f-d">Frame diameter (cm)</label>
+      <input id="f-d" type="number" value="30" min="0" step="5">
+      <label for="f-c">Coverage per bundle (cm)</label>
+      <input id="f-c" type="number" value="25" min="0" step="5">
+      <button id="f-go">Cover the frame</button>
+      <div class="out" id="f-out"></div>
+    </section>
+    <section>
+      <h2>Ribbon plan</h2>
+      <p class="hint">Loops become meters to buy.</p>
+      <label for="r-l">Bow loops</label>
+      <input id="r-l" type="number" value="6" min="0" step="1">
+      <label for="r-ll">Loop length (cm)</label>
+      <input id="r-ll" type="number" value="12" min="0" step="1">
+      <label for="r-t">Tail length (cm)</label>
+      <input id="r-t" type="number" value="30" min="0" step="5">
+      <button id="r-go">Measure the ribbon</button>
+      <div class="out" id="r-out"></div>
+    </section>
+    <section>
+      <h2>Cost plan</h2>
+      <p class="hint">Cost to make, margin to keep.</p>
+      <label for="c-f">Frame price (dollars)</label>
+      <input id="c-f" type="number" value="4" min="0" step="1">
+      <label for="c-b">Greenery bundles</label>
+      <input id="c-b" type="number" value="4" min="0" step="1">
+      <label for="c-bp">Price per bundle (dollars)</label>
+      <input id="c-bp" type="number" value="3" min="0" step="0.5">
+      <label for="c-r">Ribbon price (dollars)</label>
+      <input id="c-r" type="number" value="2.5" min="0" step="0.5">
+      <label for="c-s">Selling price (dollars)</label>
+      <input id="c-s" type="number" value="45" min="0" step="5">
+      <button id="c-go">Price the wreath</button>
+      <div class="out" id="c-out"></div>
+    </section>
+  </div>
+</main>
+<footer>Built by the app factory. <a href="index.html">About</a> &middot; <a href="https://github.com/iLanis-agent/wreathmath">Source</a></footer>
+<script src="engine.js"></script>
+<script>
+function num(id){ return parseFloat(document.getElementById(id).value); }
+function show(id, r, render){
+  var el = document.getElementById(id);
+  if (r.error) { el.textContent = r.error; el.classList.add('err'); }
+  else { el.textContent = render(r); el.classList.remove('err'); }
+}
+document.getElementById('f-go').addEventListener('click', function(){
+  var a=[num('f-d'),num('f-c')];
+  show('f-out', WreathMath.framePlan.apply(null,a), function(r){ return WreathMath.renderFrame.apply(null,[r].concat(a)); });
+});
+document.getElementById('r-go').addEventListener('click', function(){
+  var a=[num('r-l'),num('r-ll'),num('r-t')];
+  show('r-out', WreathMath.ribbonPlan.apply(null,a), function(r){ return WreathMath.renderRibbon.apply(null,[r].concat(a)); });
+});
+document.getElementById('c-go').addEventListener('click', function(){
+  var a=[num('c-f'),num('c-b'),num('c-bp'),num('c-r'),num('c-s')];
+  show('c-out', WreathMath.costPlan.apply(null,a), function(r){ return WreathMath.renderCost.apply(null,[r].concat(a)); });
+});
+</script>
+</body>
+</html>
